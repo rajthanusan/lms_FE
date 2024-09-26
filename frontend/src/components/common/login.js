@@ -6,7 +6,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import Navbar from "./navbar";
 import { Card } from "primereact/card";
-import { useNavigate } from "react-router-dom"; // Import useNavigate for routing
+ // Import useNavigate for routing
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -19,7 +19,7 @@ const Login = () => {
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate for redirection
+ // Initialize useNavigate for redirection
 
   const handleLogin = async (e) => {
   e.preventDefault();

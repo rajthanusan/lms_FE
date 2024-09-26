@@ -21,7 +21,6 @@ const MyLeave = () => {
     const [editComments, setEditComments] = useState('');
     const [data, setData] = useState([]);
     const [leaveTypes, setLeaveTypes] = useState([]);
-    const [leaveLimits, setLeaveLimits] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const rowsPerPage = 6;
 
@@ -43,11 +42,6 @@ const MyLeave = () => {
         axios.get('http://localhost:8085/api/getLeavetype')
             .then((result) => {
                 setLeaveTypes(result.data);
-                const limits = {};
-                result.data.forEach(item => {
-                    limits[item.leave_type_name] = item.total_days || 0; // Default to 0 if total_days is undefined
-                });
-                setLeaveLimits(limits);
             })
             .catch((error) => {
                 console.log(error);
@@ -58,9 +52,6 @@ const MyLeave = () => {
         getData();
         fetchLeaveTypes();
     }, [username, getData, fetchLeaveTypes]);
-
-    
-    
 
     const confirmDelete = () => {
         if (deleteItemId) {
@@ -113,9 +104,6 @@ const MyLeave = () => {
 
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Calculate total approved leaves by leave type
-   
-
     return (
         <Fragment>
             <Navbar user />
@@ -137,20 +125,19 @@ const MyLeave = () => {
                             <tr key={index}>
                                 <td>{item.leave_type}</td>
                                 <td>{new Date(item.start_date).toLocaleDateString()}</td>
-<td>{new Date(item.end_date).toLocaleDateString()}</td>
+                                <td>{new Date(item.end_date).toLocaleDateString()}</td>
                                 <td>{item.comments}</td>
                                 <td>
-                                <div
-  className={`badge text-wrap ${item.status === 'pending' ? 'bg-warning' : item.status === 'Accepted' ? 'bg-success' : item.status === 'Declined' ? 'bg-danger' : ''}`}
-  style={{
-    color: item.status === 'pending' ? 'black' : 
-           item.status === 'approved' ? 'green' : 
-           item.status === 'rejected' ? 'red' : 'inherit'
-  }}
->
-  {item.status}
-</div>
-
+                                    <div
+                                        className={`badge text-wrap ${item.status === 'pending' ? 'bg-warning' : item.status === 'Accepted' ? 'bg-success' : item.status === 'Declined' ? 'bg-danger' : ''}`}
+                                        style={{
+                                            color: item.status === 'pending' ? 'black' :
+                                                item.status === 'approved' ? 'green' :
+                                                    item.status === 'rejected' ? 'red' : 'inherit'
+                                        }}
+                                    >
+                                        {item.status}
+                                    </div>
                                 </td>
                             </tr>
                         ))}
@@ -183,7 +170,7 @@ const MyLeave = () => {
                         {leaveTypes.length > 0 ? (
                             <select className="form-control" value={editLeave} onChange={(e) => setEditLeave(e.target.value)} required>
                                 <option value="">--Select Leave Type--</option>
-                                {leaveTypes.map((item, index) => (
+                                {leaveTypes.map((item) => (
                                     <option key={item.id} value={item.leave_type_name}>
                                         {item.leave_type_name}
                                     </option>

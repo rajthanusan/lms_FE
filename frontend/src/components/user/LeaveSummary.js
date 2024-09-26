@@ -1,12 +1,10 @@
 import React, { useState, useEffect, Fragment, useCallback } from "react";
-import Table from 'react-bootstrap/Table';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
-import Col from 'react-bootstrap/Col';
+
 import Container from "react-bootstrap/Container";
 import axios from "axios";
-import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "../common/navbar";
 
