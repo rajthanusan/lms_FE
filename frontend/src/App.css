@@ -1,0 +1,124 @@
+.menu-item a {
+  text-decoration: none;
+  color: inherit;
+}
+.text-darkblue {
+  color: darkblue;
+}
+.pagination .page-item.active .page-link {
+  background-color: darkblue !important;
+  color: white !important;
+}
+
+.pagination .page-link {
+  background-color: rgb(80, 80, 204) !important;
+  color: white !important;
+}
+
+.pagination .page-link:hover {
+  background-color: darkblue !important;
+  color: white !important;
+}
+
+
+/* Custom CSS for changing the calendar icon box color */
+/* Custom button class */
+.custom-darkblue-button {
+  background-color: #004085 !important; /* Dark blue */
+  border: none;
+  color: white;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect for custom-darkblue-button */
+.custom-darkblue-button:hover {
+  background-color: #0f5aaa !important; /* Lighter blue on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+  color: white !important; /* Ensure text color remains white */
+}
+
+.custom-gold-button {
+  background-color: #d4af37 !important; /* Gold */
+  border: 2px solid #b8860b;
+  color: white;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+/* Hover effect for custom-gold-button */
+.custom-gold-button:hover {
+  background-color: #e1c16e !important; /* Lighter gold on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow */
+  color: white !important; /* Ensure text color remains white */
+}
+
+
+.p-datepicker-trigger {
+  background-color: #004085 !important; /* Dark blue color */
+  border-radius: 0.25rem;
+  padding: 0.375rem 0.75rem;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.p-datepicker-trigger .p-datepicker-trigger-icon {
+  color: white !important; /* Icon color */
+}
+
+/* Hover effect for the calendar icon box */
+.p-datepicker-trigger:hover {
+  background-color: #0056b3 !important; /* Slightly lighter blue on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow on hover */
+}
+
+.p-datepicker-trigger:hover .p-datepicker-trigger-icon {
+  color: #f8f9fa !important; /* Optional: Change icon color on hover */
+}
+
+
+.custom-calendar .p-datepicker-trigger .p-float-label{
+  color: darkblue;
+}
+
+/* customStyles.css */
+.custom-darkblue-button,
+.custom-darkblue-button .p-splitbutton-button,
+.custom-darkblue-button .p-splitbutton-menubutton {
+    background-color: darkblue !important;
+    border-color: darkblue !important;
+    color: white !important;
+}
+
+.custom-darkblue-button .p-splitbutton-menubutton:hover,
+.custom-darkblue-button .p-splitbutton-button:hover {
+    background-color: navy !important; /* Darker shade on hover */
+    border-color: navy !important;
+}
+
+.custom-darkblue-button .p-menuitem-link {
+    color: darkblue !important;
+}
+
+.custom-darkblue-button .p-menuitem-link:hover {
+    background-color: lightblue !important;
+    color: darkblue !important;
+}
+
+.link-button {
+  background: none;
+  border: none;
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+
+/* Add this to your CSS file 
+
+.adjust-right {
+  margin-right: 60px; 
+}
+.adjust-right1 {
+  margin-right: 10px; 
+}
+*/

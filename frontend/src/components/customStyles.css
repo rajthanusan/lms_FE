@@ -1,0 +1,30 @@
+/* customStyles.css */
+
+/* Apply dark blue background to all button components */
+.custom-darkblue-button,
+.custom-darkblue-button .p-button,
+.custom-darkblue-button .p-splitbutton-button,
+.custom-darkblue-button .p-splitbutton-menubutton {
+    background-color: darkblue !important;
+    border-color: darkblue !important;
+    color: white !important;
+}
+
+/* Hover effect for the main button and dropdown button */
+.custom-darkblue-button .p-button:hover,
+.custom-darkblue-button .p-splitbutton-button:hover,
+.custom-darkblue-button .p-splitbutton-menubutton:hover {
+    background-color: navy !important;  /* Darker shade on hover */
+    border-color: navy !important;
+}
+
+/* Style for menu items in SplitButton */
+.custom-darkblue-button .p-menuitem-link {
+    color: darkblue !important;
+}
+
+/* Hover effect for menu items */
+.custom-darkblue-button .p-menuitem-link:hover {
+    background-color: lightblue !important;
+    color: darkblue !important;
+}
