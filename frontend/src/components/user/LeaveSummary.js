@@ -17,7 +17,7 @@ const LeaveSummary = () => {
     const username = loggedInUser ? JSON.parse(loggedInUser).username : '';
 
     const fetchLeaveTypes = useCallback(() => {
-        axios.get('http://localhost:8085/api/getLeavetype')
+        axios.get('https://lms-be-eight.vercel.app/api/getLeavetype')
             .then((result) => {
                 setLeaveTypes(result.data);
                 const limits = {};
@@ -33,7 +33,7 @@ const LeaveSummary = () => {
 
     // Fetch leave requests data based on username
     const fetchLeaveRequests = useCallback(() => {
-        axios.get('http://localhost:8085/api/LeaveView/')
+        axios.get('https://lms-be-eight.vercel.app/api/LeaveView/')
             .then((result) => {
                 const filteredData = result.data.data.filter(item => item.username === username);
                 setData(filteredData);

@@ -25,7 +25,7 @@ const Leaverequest = () => {
     }, []);
 
     const getData = () => {
-        axios.get("http://localhost:8085/api/LeaveApply/")
+        axios.get("https://lms-be-eight.vercel.app/api/LeaveApply/")
             .then((result) => {
                 if (result.data && result.data.data) {
                     setData(result.data.data);
@@ -51,7 +51,7 @@ const Leaverequest = () => {
 
     const confirmAccept = () => {
         axios
-            .put(`http://localhost:8085/api/LeaveApply/${selectedItemId}/approved`)
+            .put(`https://lms-be-eight.vercel.app/api/LeaveApply/${selectedItemId}/approved`)
             .then((response) => {
                 console.log('Response:', response); // Log response for debugging
                 toast.success("Leave request accepted");
@@ -67,7 +67,7 @@ const Leaverequest = () => {
 
     const confirmDecline = () => {
         axios
-            .put(`http://localhost:8085/api/LeaveApply/${selectedItemId}/rejected`)
+            .put(`https://lms-be-eight.vercel.app/api/LeaveApply/${selectedItemId}/rejected`)
             .then(() => {
                 toast.success("Leave request declined");
                 getData();

@@ -28,7 +28,7 @@ const Employees = () => {
     }, [])
 
     const getData = () => {
-        axios.get('http://localhost:8085/api/User/')
+        axios.get('https://lms-be-eight.vercel.app/api/User/')
             .then((result) => {
                 setData(result.data)
             })
@@ -64,7 +64,7 @@ const Employees = () => {
 //deleteEmployeeId
 const confirmDelete = () => {
     if (deleteEmployeeId) {
-        axios.delete(`http://localhost:8085/api/User/delete/${deleteEmployeeId}`)
+        axios.delete(`https://lms-be-eight.vercel.app/api/User/delete/${deleteEmployeeId}`)
             .then((result) => {
                 if (result.status === 200) {
                     toast.success("Leave request has been deleted");

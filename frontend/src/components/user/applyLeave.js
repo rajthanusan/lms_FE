@@ -22,7 +22,7 @@ const ApplyLeave = () => {
 
     // Move fetchLeaveRequests definition above useEffect
     const fetchLeaveRequests = useCallback(() => {
-        axios.get('http://localhost:8085/api/LeaveView/')
+        axios.get('https://lms-be-eight.vercel.app/api/LeaveView/')
             .then((result) => {
                 const filteredData = result.data.data.filter(item => item.username === username);
                 setApprovedLeaves(filteredData); // Set the approved leaves here
@@ -38,7 +38,7 @@ const ApplyLeave = () => {
     }, [fetchLeaveRequests]); // No change here
 
     const fetchLeaveTypes = () => {
-        axios.get('http://localhost:8085/api/getLeavetype')
+        axios.get('https://lms-be-eight.vercel.app/api/getLeavetype')
             .then((result) => {
                 setLeaveTypes(result.data);
                 const limits = {};
@@ -101,7 +101,7 @@ const ApplyLeave = () => {
             return;
         }
 
-        const url = 'http://localhost:8085/api/Leaveapply';
+        const url = 'https://lms-be-eight.vercel.app/api/Leaveapply';
         const leaveData = {
             "leave": leave,
             "startdate": new Date(startdate).toISOString(),

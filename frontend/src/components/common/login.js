@@ -36,7 +36,7 @@ const Login = () => {
 
   try {
     // Send login request to the API
-    const response = await axios.post("http://localhost:8085/api/login", {
+    const response = await axios.post("https://lms-be-eight.vercel.app/api/login", {
       username,
       password,
     });
@@ -74,7 +74,7 @@ const Login = () => {
   const handleRequestReset = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8085/api/request-password-reset",
+        "https://lms-be-eight.vercel.app/api/request-password-reset",
         { email: resetEmail }
       );
       if (response.data.success) {
@@ -92,7 +92,7 @@ const Login = () => {
   const handleVerifyCode = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:8085/api/verify-code",
+        "https://lms-be-eight.vercel.app/api/verify-code",
         { email: resetEmail, code: resetCode }
       );
       if (response.data.success) {
@@ -120,7 +120,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8085/api/reset-password",
+        "https://lms-be-eight.vercel.app/api/reset-password",
         { email: resetEmail, newPassword }
       );
       if (response.data.success) {

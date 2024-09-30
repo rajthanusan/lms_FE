@@ -30,7 +30,7 @@ const Leaverequest = () => {
     const getDepartment = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8085/find-department",
+          "https://lms-be-eight.vercel.app/find-department",
           {
             params: { username },
           }
@@ -48,7 +48,7 @@ const Leaverequest = () => {
   const getData = useCallback(() => {
     if (department) {
       axios
-        .get("http://localhost:8085/api/LeaveApply/", {
+        .get("https://lms-be-eight.vercel.app/api/LeaveApply/", {
           params: { department },
         })
         .then((result) => {
@@ -81,7 +81,7 @@ const Leaverequest = () => {
 
   const confirmAccept = () => {
     axios
-      .put(`http://localhost:8085/api/LeaveApply/${selectedItemId}/approved`)
+      .put(`https://lms-be-eight.vercel.app/api/LeaveApply/${selectedItemId}/approved`)
       .then((response) => {
         toast.success("Leave request accepted");
         getData();
@@ -95,7 +95,7 @@ const Leaverequest = () => {
 
   const confirmDecline = () => {
     axios
-      .put(`http://localhost:8085/api/LeaveApply/${selectedItemId}/rejected`)
+      .put(`https://lms-be-eight.vercel.app/api/LeaveApply/${selectedItemId}/rejected`)
       .then(() => {
         toast.success("Leave request declined");
         getData();

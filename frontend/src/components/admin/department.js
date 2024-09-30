@@ -26,7 +26,7 @@ const RegisterDepartment = () => {
     }, []);
 
     const getData = () => {
-        axios.get('http://localhost:8085/api/Department')
+        axios.get('https://lms-be-eight.vercel.app/api/Department')
             .then((result) => {
                 setData(result.data);
             })
@@ -38,7 +38,7 @@ const RegisterDepartment = () => {
     const handleEdit = (id) => {
         setShow(true);
         setEditId(id);
-        axios.get(`http://localhost:8085/api/Department/${id}`)
+        axios.get(`https://lms-be-eight.vercel.app/api/Department/${id}`)
             .then((result) => {
                 setEditDepartmentName(result.data.department_name);
                 setEditLocation(result.data.location);
@@ -54,7 +54,7 @@ const RegisterDepartment = () => {
             return;
         }
 
-        const url = `http://localhost:8085/api/Department/${editID}`;
+        const url = `https://lms-be-eight.vercel.app/api/Department/${editID}`;
         const data = {
             department_name: editDepartmentName,
             location: editLocation,
@@ -74,7 +74,7 @@ const RegisterDepartment = () => {
     };
 
     const handleSave = () => {
-        const url = 'http://localhost:8085/api/Department';
+        const url = 'https://lms-be-eight.vercel.app/api/Department';
         const data = {
             department_name: departmentName,
             location: location
@@ -126,7 +126,7 @@ const RegisterDepartment = () => {
 
     const confirmDelete = () => {
         if (deleteId) {
-            axios.delete(`http://localhost:8085/api/Department/${deleteId}`)
+            axios.delete(`https://lms-be-eight.vercel.app/api/Department/${deleteId}`)
                 .then((result) => {
                     if (result.status === 200) {
                         toast.success("Department has been deleted");
