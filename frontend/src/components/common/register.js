@@ -184,47 +184,55 @@ const Register = () => {
                 <br />
 
                 <div className="row mb-3">
-                  <div className="col">
-                    <span className="p-float-label">
-                      <Calendar
-                        id="birthday"
-                        value={birthday}
-                        onChange={(e) => setBirthday(e.value)}
-                        dateFormat="dd/mm/yy"
-                        className={`custom-calendar ${
-                          validationErrors.birthday ? "p-invalid" : ""
-                        }`}
-                        showIcon
-                      />
-                      <label htmlFor="birthday">Birth date</label>
-                    </span>
-                    {validationErrors.birthday && (
-                      <small className="p-error">
-                        {validationErrors.birthday}
-                      </small>
-                    )}
-                  </div>
-                  <div className="col">
-                    <span className="p-float-label">
-                      <Calendar
-                        id="joindate"
-                        value={joindate}
-                        onChange={(e) => setJoindate(e.value)}
-                        dateFormat="dd/mm/yy"
-                        className={`custom-calendar ${
-                          validationErrors.joindate ? "p-invalid" : ""
-                        }`}
-                        showIcon
-                      />
-                      <label htmlFor="joindate">Joined date</label>
-                    </span>
-                    {validationErrors.joindate && (
-                      <small className="p-error">
-                        {validationErrors.joindate}
-                      </small>
-                    )}
-                  </div>
-                </div>
+  <div className="col">
+    <span className="p-float-label">
+      <Calendar
+        id="birthday"
+        value={birthday ? new Date(birthday) : null} // Pass a valid Date object or null
+        onChange={(e) => {
+          if (e.value) {
+            const formattedDate = e.value.toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+            setBirthday(formattedDate); // Set formatted date in state
+          }
+        }}
+        dateFormat="dd/mm/yy" // Display format
+        className={`custom-calendar ${
+          validationErrors.birthday ? "p-invalid" : ""
+        }`}
+        showIcon
+      />
+      <label htmlFor="birthday">Birth date</label>
+    </span>
+    {validationErrors.birthday && (
+      <small className="p-error">{validationErrors.birthday}</small>
+    )}
+  </div>
+  
+  <div className="col">
+    <span className="p-float-label">
+      <Calendar
+        id="joindate"
+        value={joindate ? new Date(joindate) : null} // Pass a valid Date object or null
+        onChange={(e) => {
+          if (e.value) {
+            const formattedDate = e.value.toISOString().split("T")[0]; // Format to "YYYY-MM-DD"
+            setJoindate(formattedDate); // Set formatted date in state
+          }
+        }}
+        dateFormat="dd/mm/yy" // Display format
+        className={`custom-calendar ${
+          validationErrors.joindate ? "p-invalid" : ""
+        }`}
+        showIcon
+      />
+      <label htmlFor="joindate">Joined date</label>
+    </span>
+    {validationErrors.joindate && (
+      <small className="p-error">{validationErrors.joindate}</small>
+    )}
+  </div>
+</div>
+
 
                 {/* Department Dropdown */}
                 <div>
