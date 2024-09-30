@@ -38,7 +38,7 @@ const ApplyLeave = () => {
     }, [fetchLeaveRequests]); // No change here
 
     const fetchLeaveTypes = () => {
-        axios.get('https://lms-be-eight.vercel.app/api/getLeavetype')
+        axios.get('https://lms-be-eight.vercel.app/api/getLeavetype/')
             .then((result) => {
                 setLeaveTypes(result.data);
                 const limits = {};
@@ -101,7 +101,7 @@ const ApplyLeave = () => {
             return;
         }
 
-        const url = 'https://lms-be-eight.vercel.app/api/Leaveapply';
+        const url = 'https://lms-be-eight.vercel.app/api/Leaveapply/';
         const leaveData = {
             "leave": leave,
             "startdate": new Date(startdate).toISOString(),
