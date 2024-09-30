@@ -76,11 +76,13 @@ const Employees = () => {
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const filteredData = data.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
-  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+  const filteredData = Array.isArray(data)
+  ? data.filter((item) =>
+      item.username.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  : [];
 
+const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
   const onPageChange = (event) => {
     setCurrentPage(event.page + 1);
   };
@@ -126,12 +128,12 @@ const Employees = () => {
           <input
             type="text"
             className="form-control"
-            placeholder="Search by name"
+            placeholder="Search by mail"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
         <div className="mb-3">
-          <h5>Welcome, {department || ""} Manager</h5>{" "}
+          <h5>{department || ""} Employees</h5>{" "}
           {/* Display department */}
         </div>
         <Table striped bordered hover>
@@ -140,7 +142,7 @@ const Employees = () => {
               <th>Name</th>
               <th>Birth date</th>
               <th>Joined date</th>
-              <th>Username</th>
+              <th>Email</th>
               <th>Department</th>
               <th>Actions</th>
             </tr>
@@ -198,7 +200,7 @@ const Employees = () => {
                   {new Date(selectedEmployee.joindate).toLocaleDateString()}
                 </p>
 
-                <p>Username: {selectedEmployee.username}</p>
+                <p>Email: {selectedEmployee.username}</p>
               </div>
             )}
           </Modal.Body>

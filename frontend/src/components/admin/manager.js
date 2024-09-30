@@ -5,6 +5,7 @@ import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+import Dropdown from "react-bootstrap/Dropdown";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faTrash } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -14,35 +15,37 @@ import Navbar from "../common/navbar";
 
 const Manager = () => {
   const [show, setShow] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-
-  const handleClose = () => setShow(false);
-  const handleCloseDeleteModal = () => setShowDeleteModal(false);
-  const handleShowDeleteModal = (id) => {
-    setDeleteId(id);
-    setShowDeleteModal(true);
-  };
-
-  // Add
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
-  const [contact, setContact] = useState("");
   const [department, setDepartment] = useState("");
-
-  // Edit
   const [editID, setEditId] = useState("");
+  const [editDepartment, setEditDepartment] = useState("");
   const [editUsername, setEditUsername] = useState("");
   const [editPassword, setEditPassword] = useState("");
   const [editName, setEditName] = useState("");
-  const [editContact, setEditContact] = useState("");
-  const [editDepartment, setEditDepartment] = useState("");
-
+  const [editLandline, setEditLandline] = useState(""); // For landline
+  const [editHandphone, setEditHandphone] = useState(""); // For handphone
   const [data, setData] = useState([]);
+  const [departments, setDepartments] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [landline, setLandline] = useState("");
+  const [handphone, setHandphone] = useState("");
 
   useEffect(() => {
     getData();
+    fetchDepartments();
   }, []);
+
+  const fetchDepartments = async () => {
+    try {
+      const response = await axios.get("http://localhost:8085/api/AllDepartment");
+      setDepartments(response.data);
+    } catch (error) {
+      console.error("Failed to fetch departments", error);
+      toast.error("Failed to load departments");
+    }
+  };
 
   const getData = () => {
     axios
@@ -61,12 +64,12 @@ const Manager = () => {
     axios
       .get(`http://localhost:8085/api/Manager/${id}`)
       .then((result) => {
+        setEditDepartment(result.data.department);
         setEditUsername(result.data.username);
         setEditPassword(result.data.password);
         setEditName(result.data.name);
-        setEditContact(result.data.contact);
-        setEditDepartment(result.data.department);
-        setEditId(id);
+        setEditLandline(result.data.landline || "");
+        setEditHandphone(result.data.handphone || "");
       })
       .catch((error) => {
         console.log(error);
@@ -74,80 +77,81 @@ const Manager = () => {
   };
 
   const handleUpdate = () => {
-    if (!editID) {
-      toast.error("Invalid ID");
+    if (!editID || !editUsername || !editName || !editHandphone) {
+      toast.error("All fields are required");
       return;
     }
 
     const url = `http://localhost:8085/api/Manager/${editID}`;
-    const updatedData = {
+    const data = {
       username: editUsername,
       password: editPassword,
       name: editName,
-      contact: editContact,
       department: editDepartment,
+      landline: editLandline || null,
+      handphone: editHandphone,
     };
 
     axios
-      .put(url, updatedData)
-      .then((result) => {
+      .put(url, data)
+      .then(() => {
         toast.success("Manager has been updated");
-        getData(); // Refresh the data
-        setShow(false); // Close the modal
+        getData(); // Refresh data
+        clear(); // Clear form fields
+        setShow(false); // Close modal
       })
       .catch((error) => {
+        console.error("Error during update:", error);
         toast.error("Manager updating failed");
       });
   };
 
   const handleSave = () => {
-    const url = "http://localhost:8085/api/Managerinsert";
-    const newData = {
-      username,
-      password,
-      name,
-      contact,
-      department,
+    const url = "http://localhost:8085/api/crmanager";
+    const data = {
+      username: username,
+      password: password,
+      name: name,
+      landline: landline,
+      handphone: handphone,
+      department: department,
+      role: "manager",
     };
-  
+
     axios
-      .post(url, newData)
-      .then((result) => {
-        console.log(result); // Add this line to see the response
-        getData(); // Refresh the table with new data
-        clear(); // Clear input fields
+      .post(url, data)
+      .then(() => {
+        getData();
+        clear();
         toast.success("Manager has been added");
       })
       .catch((error) => {
-        console.error("Error adding manager:", error);
         toast.error("Failed to add manager");
       });
   };
-  
+
   const clear = () => {
+    setDepartment("");
+    setEditDepartment("");
+    setEditId("");
     setUsername("");
     setPassword("");
     setName("");
-    setContact("");
-    setDepartment("");
-
+    setLandline("");
+    setHandphone("");
     setEditUsername("");
     setEditPassword("");
     setEditName("");
-    setEditContact("");
-    setEditDepartment("");
-    setEditId("");
+    setEditLandline("");
+    setEditHandphone("");
   };
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(0);
   const itemsPerPage = 3;
-
   const startIndex = currentPage * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
   const currentItems = data.slice(startIndex, endIndex);
-
   const totalPages = Math.ceil(data.length / itemsPerPage);
 
   const nextPage = () => {
@@ -159,148 +163,289 @@ const Manager = () => {
   };
 
   // Delete
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteId, setDeleteId] = useState(null);
+
+  const handleCloseDeleteModal = () => setShowDeleteModal(false);
+  const handleShowDeleteModal = (id) => {
+    setDeleteId(id);
+    setShowDeleteModal(true);
+  };
 
   const confirmDelete = () => {
     if (deleteId) {
       axios
         .delete(`http://localhost:8085/api/Manager/${deleteId}`)
-        .then((result) => {
-          if (result.status === 200) {
-            toast.success("Manager has been deleted");
-            getData();
-            handleCloseDeleteModal();
-          }
+        .then(() => {
+          toast.success("Manager has been deleted");
+          getData();
+          handleCloseDeleteModal();
         })
         .catch((error) => {
-          toast.error(error);
+          toast.error("Failed to delete manager");
         });
     }
   };
 
-    return (
-      <Fragment>
-          <Navbar admin /> <br />
-          <div className="container">
-              <ToastContainer />
-              <Row>
-                  <Col>
-                      <div className="container pt-5">
-                          <div className="row justify-content-center">
-                              <div className="col-md-12">
-                                  <div className="card shadow-lg p-4">
-                                      <h1 className="text-darkblue">Create Manager</h1> <hr /> <br />
-                                      <label>Username</label>
-                                      <input type="text" className="form-control" placeholder="Username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                                      <br />
-                                      <label>Password</label>
-                                      <input type="password" className="form-control" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                                      <br />
-                                      <label>Name</label>
-                                      <input type="text" className="form-control" placeholder="Name" value={name} onChange={(e) => setName(e.target.value)} />
-                                      <br />
-                                      <label>Contact</label>
-                                      <input type="text" className="form-control" placeholder="Contact (Optional)" value={contact} onChange={(e) => setContact(e.target.value)} />
-                                      <br />
-                                      <label>Department</label>
-                                      <input type="text" className="form-control" placeholder="Department" value={department} onChange={(e) => setDepartment(e.target.value)} />
-                                      <br />
-                                      <button className="btn btn-primary custom-darkblue-button" onClick={handleSave}>Create</button>
-                                      <br />
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                  </Col>
-                  <Col>
-                      <div className="container pt-5">
-                          <div className="row justify-content-center">
-                              <div className="col-md-12">
-                                  <div className="card shadow-lg p-4">
-                                      <h1 className="text-darkblue">Managers</h1> <hr />
-                                      <Table>
-                                          <thead>
-                                              <tr>
-                                                  <th>Username</th>
-                                                  <th>Name</th>
-                                                  <th>Contact</th>
-                                                  <th>Department</th>
-                                                  <th>Actions</th>
-                                              </tr>
-                                          </thead>
-                                          <tbody>
-                                              {currentItems.map((item, index) => (
-                                                  <tr key={index}>
-                                                      <td>{item.username}</td>
-                                                      <td>{item.name}</td>
-                                                      <td>{item.contact}</td>
-                                                      <td>{item.department}</td>
-                                                      <td>
-                                                          <button className="btn btn-info custom-darkblue-button" onClick={() => handleEdit(item.id)}>
-                                                          <FontAwesomeIcon icon={faPencil} />
-                                                          </button>
-                                                          
-                                                          <button className="btn btn-danger ml-2" onClick={() => handleShowDeleteModal(item.id)}>
-                                                              <FontAwesomeIcon icon={faTrash} />
-                                                          </button>
-                                                      </td>
-                                                  </tr>
-                                              ))}
-                                          </tbody>
-                                      </Table>
-                                      <div>
-                                            <button className="btn" onClick={prevPage} disabled={currentPage === 0}>
-                                                {"<"}
-                                            </button>
+  return (
+    <Fragment>
+      <Navbar admin /> <br />
+      <div className="container">
+        <ToastContainer />
+        <Row>
+          <Col>
+            <div className="container pt-5">
+              <div className="row justify-content-center">
+                <div className="col-md-12">
+                  <div className="card shadow-lg p-4">
+                    <h1 className="text-darkblue">Register Manager</h1> <hr />
+                    <br />
+                    <label>Email</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Mail Address"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                    />
+                    <br />
+                    <label>Password</label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                    />
+                    <br />
+                    <label>Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                    />
+                    <br />
+                    <label>Landline (Optional)</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Landline (Optional)"
+                      value={landline}
+                      onChange={(e) => setLandline(e.target.value)}
+                    />
+                    <br />
+                    <label>Handphone</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Handphone"
+                      value={handphone}
+                      onChange={(e) => setHandphone(e.target.value)}
+                      required
+                    />
+                    <br />
+                    <label>Department</label>
+                    <Dropdown
+                      onToggle={() => setDropdownOpen(!dropdownOpen)}
+                      className="mb-3"
+                    >
+                      <Dropdown.Toggle
+                        className="form-control"
+                        variant="light"
+                        id="dropdown-basic"
+                      >
+                        {department || "Select Department"}
+                      </Dropdown.Toggle>
+
+                      <Dropdown.Menu show={dropdownOpen}>
+                        {departments.length > 0 ? (
+                          departments.map((dept, index) => (
+                            <Dropdown.Item
+                              key={index}
+                              onClick={() => {
+                                setDepartment(dept);
+                                setDropdownOpen(false);
+                              }}
+                            >
+                              {dept}
+                            </Dropdown.Item>
+                          ))
+                        ) : (
+                          <Dropdown.Item disabled>
+                            No departments available
+                          </Dropdown.Item>
+                        )}
+                      </Dropdown.Menu>
+                    </Dropdown>
+                    <br />
+                    <Button
+                      className="btn btn-primary custom-darkblue-button"
+                      onClick={handleSave}
+                    >
+                      Create
+                    </Button>
+                    <br />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Col>
+          <Col>
+            <div className="container pt-5">
+              <div className="row justify-content-center">
+                <div className="col-md-12">
+                  <div className="card shadow-lg p-4">
+                    <h1 className="text-darkblue">Managers</h1> <hr />
+                    <Table responsive>
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Department</th>
+                          <th>Action</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {currentItems.map((item, index) => (
+                          <tr key={index}>
+                            <td>{item.name}</td>
+                            <td>{item.username}</td>
+                            <td>{item.department}</td>
+                            <td>
+                                                            <button className="btn btn-primary custom-darkblue-button" onClick={() => handleEdit(item.id)}><FontAwesomeIcon icon={faPencil} /></button>&nbsp;
+                                                            <button className="btn btn-danger" onClick={() => handleShowDeleteModal(item.id)}><FontAwesomeIcon icon={faTrash} /></button>
+                                                        </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                    <div>
+                                            <button className="btn" onClick={prevPage} disabled={currentPage === 0}>{"<"}</button>
                                             &nbsp;<span>{currentPage + 1} / {totalPages}</span>&nbsp;
-                                            <button className="btn custom-darkblue-button" onClick={nextPage} disabled={currentPage === totalPages - 1}>
-                                                {">"}
-                                            </button>
+                                            <button className="btn custom-darkblue-button" onClick={nextPage} disabled={currentPage === totalPages - 1}>{">"}</button>
                                         </div>
-                                  </div>
-                              </div>
-                          </div>
-                      </div>
-                      <Modal show={show} onHide={handleClose}>
-                          <Modal.Header closeButton>
-                              <Modal.Title>Edit Manager</Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body>
-                              <label>Username</label>
-                              <input type="text" className="form-control" value={editUsername} onChange={(e) => setEditUsername(e.target.value)} required />
-                              <br />
-                              <label>Password</label>
-                              <input type="password" className="form-control" value={editPassword} onChange={(e) => setEditPassword(e.target.value)} required />
-                              <br />
-                              <label>Name</label>
-                              <input type="text" className="form-control" value={editName} onChange={(e) => setEditName(e.target.value)} />
-                              <br />
-                              <label>Contact</label>
-                              <input type="text" className="form-control" value={editContact} onChange={(e) => setEditContact(e.target.value)} />
-                              <br />
-                              <label>Department</label>
-                              <input type="text" className="form-control" value={editDepartment} onChange={(e) => setEditDepartment(e.target.value)} />
-                          </Modal.Body>
-                          <Modal.Footer>
-                              <Button variant="secondary" onClick={handleClose}>Close</Button>
-                              <Button variant="primary" onClick={handleUpdate}>Save Changes</Button>
-                          </Modal.Footer>
-                      </Modal>
-                      <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
-                          <Modal.Header closeButton>
-                              <Modal.Title>Confirm Deletion</Modal.Title>
-                          </Modal.Header>
-                          <Modal.Body>Are you sure you want to delete this manager?</Modal.Body>
-                          <Modal.Footer>
-                              <Button variant="secondary" onClick={handleCloseDeleteModal}>Cancel</Button>
-                              <Button variant="danger" onClick={confirmDelete}>Delete</Button>
-                          </Modal.Footer>
-                      </Modal>
-                  </Col>
-              </Row>
-          </div>
-      </Fragment>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Col>
+        </Row>
+
+        <Modal show={show} onHide={() => setShow(false)}>
+          <Modal.Header closeButton>
+            <Modal.Title>Edit Manager</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <label>Email</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Mail Address"
+              value={editUsername}
+              onChange={(e) => setEditUsername(e.target.value)}
+            />
+            <br />
+            <label>Password</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="Password"
+              value={editPassword}
+              onChange={(e) => setEditPassword(e.target.value)}
+            />
+            <br />
+            <label>Name</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Name"
+              value={editName}
+              onChange={(e) => setEditName(e.target.value)}
+            />
+            <br />
+            <label>Landline (Optional)</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Landline (Optional)"
+              value={editLandline}
+              onChange={(e) => setEditLandline(e.target.value)}
+            />
+            <br />
+            <label>Handphone</label>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Handphone"
+              value={editHandphone}
+              onChange={(e) => setEditHandphone(e.target.value)}
+              required
+            />
+            <br />
+            <label>Department</label>
+            <Dropdown
+              onToggle={() => setDropdownOpen(!dropdownOpen)}
+              className="mb-3"
+            >
+              <Dropdown.Toggle
+                className="form-control"
+                variant="light"
+                id="dropdown-basic"
+              >
+                {editDepartment || "Select Department"}
+              </Dropdown.Toggle>
+
+              <Dropdown.Menu show={dropdownOpen}>
+                {departments.length > 0 ? (
+                  departments.map((dept, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      onClick={() => {
+                        setEditDepartment(dept);
+                        setDropdownOpen(false);
+                      }}
+                    >
+                      {dept}
+                    </Dropdown.Item>
+                  ))
+                ) : (
+                  <Dropdown.Item disabled>No departments available</Dropdown.Item>
+                )}
+              </Dropdown.Menu>
+            </Dropdown>
+            <br />
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={() => setShow(false)}>
+              Close
+            </Button>
+            <Button variant="primary custom-darkblue-button" onClick={handleUpdate}>
+              Update
+            </Button>
+          </Modal.Footer>
+        </Modal>
+
+        <Modal show={showDeleteModal} onHide={handleCloseDeleteModal}>
+          <Modal.Header closeButton>
+            <Modal.Title>Delete Manager</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>Are you sure you want to delete this manager?</Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseDeleteModal}>
+              Cancel
+            </Button>
+            <Button variant="danger" onClick={confirmDelete}>
+              Delete
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
+    </Fragment>
   );
-                                              }
+};
 
 export default Manager;

@@ -9,6 +9,7 @@ import { Calendar } from "primereact/calendar";
 import { Dropdown } from "primereact/dropdown";
 import Navbar from "./navbar";
 
+
 const Register = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -17,10 +18,13 @@ const Register = () => {
   const [name, setName] = useState("");
   const [department, setDepartment] = useState("");
   const [departments, setDepartments] = useState([]);
-  const [contact, setContact] = useState(""); // New state for contact
+  const [handphone, sethandphone] = useState(""); // New state for contact
 
   // validation
   const [validationErrors, setValidationErrors] = useState({});
+
+ 
+
 
   // Fetch departments from the backend
   useEffect(() => {
@@ -62,8 +66,8 @@ const Register = () => {
       errors.password = "Password is required";
     }
 
-    if (!contact) {
-      errors.contact = "Contact number is required";
+    if (!handphone) {
+      errors.handphone = "handphone number is required";
     }
 
     if (!department) {
@@ -88,7 +92,7 @@ const Register = () => {
             joindate,
             name,
             department, // Include the department in the submission
-            contact, // Include contact in the submission
+            handphone, // Include contact in the submission
           }
         );
 
@@ -101,8 +105,10 @@ const Register = () => {
           setJoindate(null);
           setName("");
           setDepartment("");
-          setContact(""); // Clear contact field
+          sethandphone(""); // Clear contact field
           setValidationErrors({});
+
+          window.location.href = "./login";
         }
       } catch (error) {
         console.error("Registration failed:", error);
@@ -165,14 +171,14 @@ const Register = () => {
                       <i className="pi pi-phone"></i>
                     </span>
                     <InputText
-                      value={contact}
-                      onChange={(e) => setContact(e.target.value)}
-                      className={validationErrors.contact ? "p-invalid" : ""}
+                      value={handphone}
+                      onChange={(e) => sethandphone(e.target.value)}
+                      className={validationErrors.handphone ? "p-invalid" : ""}
                       placeholder="Contact Number"
                     />
                   </div>
-                  {validationErrors.contact && (
-                    <small className="p-error">{validationErrors.contact}</small>
+                  {validationErrors.handphone && (
+                    <small className="p-error">{validationErrors.handphone}</small>
                   )}
                 </div>
                 <br />

@@ -10,6 +10,8 @@ import Manager from '../admin/manager';
 import Leaverequest from '../manager/leaverequest';
 import Employees from '../manager/employees';
 import LeaveSummary from '../user/LeaveSummary';
+import Department from '../admin/department';
+import LeaveSummaryEmp from '../manager/leavesummaryemp';
 
 // Helper component to wrap Employees and pass the username
 const EmployeesWithProps = () => {
@@ -68,6 +70,10 @@ export default function Routesnav() {
                     element={loggedInAdmin ? <Manager /> : <Navigate to="/login" />}
                 />
                 <Route
+                    path="/department"
+                    element={loggedInAdmin ? <Department/> : <Navigate to="/login" />}
+                />
+                <Route
                     path="/leavetype"
                     element={loggedInAdmin ? <Leavetype /> : <Navigate to="/login" />}
                 />
@@ -76,9 +82,14 @@ export default function Routesnav() {
                     element={loggedInDepartmentManager ? <Leaverequest /> : <Navigate to="/login" />}
                 />
                 <Route
+                    path="/leavesummaryemp"
+                    element={loggedInDepartmentManager ? <LeaveSummaryEmp /> : <Navigate to="/login" />}
+                />
+                <Route
                     path="/leavesummary"
                     element={loggedInUser ? <LeaveSummary /> : <Navigate to="/login" />}
                 />
+                
             </Routes>
         </Router>
     );

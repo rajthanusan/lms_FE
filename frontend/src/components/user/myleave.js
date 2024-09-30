@@ -9,6 +9,7 @@ import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "../common/navbar";
+import { Paginator } from 'primereact/paginator'; // Import Paginator
 
 const MyLeave = () => {
     const [show, setShow] = useState(false);
@@ -102,7 +103,10 @@ const MyLeave = () => {
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
     const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
 
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    // Update this function to handle page changes
+    const onPageChange = (event) => {
+        setCurrentPage(event.page + 1); // PrimeReact Paginator uses zero-based index
+    };
 
     return (
         <Fragment>
@@ -143,20 +147,15 @@ const MyLeave = () => {
                         ))}
                     </tbody>
                 </Table>
-                <div className="d-flex justify-content-center">
-                    <ul className="pagination">
-                        {Array.from(
-                            { length: Math.ceil(data.length / rowsPerPage) },
-                            (_, index) => (
-                                <li key={index} className={`page-item ${currentPage === index + 1 ? "active" : ""}`}>
-                                    <button className="page-link" onClick={() => paginate(index + 1)}>
-                                        {index + 1}
-                                    </button>
-                                </li>
-                            )
-                        )}
-                    </ul>
-                </div>
+
+                {/* Replace pagination with Paginator */}
+                <Paginator
+                    first={indexOfFirstRow}
+                    rows={rowsPerPage}
+                    totalRecords={data.length} // Total data length
+                    onPageChange={onPageChange}
+                    className="custom-paginator" // Add your custom class here
+                />
             </Container>
 
             {/* Edit Modal */}

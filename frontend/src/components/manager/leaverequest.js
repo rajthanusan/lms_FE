@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import {Paginator} from "primereact/paginator"; // Make sure to import the Paginator
 
 const Leaverequest = () => {
   const [data, setData] = useState([]);
@@ -25,7 +26,6 @@ const Leaverequest = () => {
     ? JSON.parse(sessionStorage.getItem("loggedInDepartmentManager")).username
     : "";
 
-  // Fetch department when component mounts
   useEffect(() => {
     const getDepartment = async () => {
       try {
@@ -45,7 +45,6 @@ const Leaverequest = () => {
     getDepartment();
   }, [username]);
 
-  // Fetch leave requests based on department
   const getData = useCallback(() => {
     if (department) {
       axios
@@ -108,27 +107,21 @@ const Leaverequest = () => {
       });
   };
 
-  const totalApprovedLeaves = data.reduce((acc, item) => {
-    if (item.status === "approved") {
-      acc[item.username] = (acc[item.username] || 0) + 1;
-    }
-    return acc;
-  }, {});
+  
 
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const filteredData = Array.isArray(data)
-    ? data.filter((item) =>
-        item.leave_type.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-    : [];
-  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+  ? data.filter((item) =>
+      item.leave_type.toLowerCase().includes(searchTerm.toLowerCase()) || // Search by leave type
+      item.username.toLowerCase().includes(searchTerm.toLowerCase()) // Search by username
+    )
+  : [];
 
-  const totalPages = Math.ceil(filteredData.length / rowsPerPage);
+const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
 
-  // Add paginate function to handle page change
-  const paginate = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const onPageChange = (event) => {
+    setCurrentPage(event.page + 1); // Update current page when pagination changes
   };
 
   return (
@@ -137,27 +130,23 @@ const Leaverequest = () => {
       <ToastContainer />
       <br />
       <div className="container">
-        <h1 className="text-darkblue">Admin Leave Request Log</h1>
+        <h1 className="text-darkblue">Employee Leave Requests</h1>
         <hr />
         <div className="input-group mb-3">
           <input
             type="text"
             className="form-control"
-            placeholder="Search by leave type"
+            placeholder="Search by mail or leave type"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-        </div>
-        <div className="mb-3">
-          <h5>Department: {department || "Loading..."}</h5>
         </div>
         <Table striped hover className="table-light">
           <thead>
             <tr>
-              <th>Employee Username</th>
+              <th>Employee Email</th>
               <th>Leave Type</th>
               <th>Start Date</th>
               <th>End Date</th>
-              <th>Total Leaves</th>
               <th>Actions</th>
               <th>Status</th>
             </tr>
@@ -169,7 +158,7 @@ const Leaverequest = () => {
                 <td>{item.leave_type}</td>
                 <td>{new Date(item.start_date).toLocaleDateString()}</td>
                 <td>{new Date(item.end_date).toLocaleDateString()}</td>
-                <td>{totalApprovedLeaves[item.username] || 0}</td>
+               
 
                 <td>
                   <OverlayTrigger
@@ -213,31 +202,14 @@ const Leaverequest = () => {
           </tbody>
         </Table>
 
-        {/* Pagination Controls */}
-        <div className="d-flex justify-content-center">
-          <nav aria-label="Page navigation example">
-            <ul className="pagination">
-              {Array.from(
-                { length: totalPages },
-                (_, index) => (
-                  <li
-                    key={index}
-                    className={`page-item ${
-                      currentPage === index + 1 ? "active" : ""
-                    }`}
-                  >
-                    <button
-                      className="page-link"
-                      onClick={() => paginate(index + 1)}
-                    >
-                      {index + 1}
-                    </button>
-                  </li>
-                )
-              )}
-            </ul>
-          </nav>
-        </div>
+        {/* Paginator */}
+        <Paginator
+          first={indexOfFirstRow}
+          rows={rowsPerPage}
+          totalRecords={filteredData.length}
+          onPageChange={onPageChange}
+          className="custom-paginator"
+        />
       </div>
 
       {/* Accept Modal */}
@@ -252,7 +224,7 @@ const Leaverequest = () => {
           <Button variant="secondary" onClick={() => setShowAcceptModal(false)}>
             Cancel
           </Button>
-          <Button variant="primary" onClick={confirmAccept}>
+          <Button variant="primary custom-darkblue-button" onClick={confirmAccept}>
             Accept
           </Button>
         </Modal.Footer>

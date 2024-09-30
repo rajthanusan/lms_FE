@@ -38,10 +38,9 @@ const Leavetype = () => {
     const handleEdit = (id) => {
         setShow(true);
         setEditId(id);
-        setEditLeave('');
-        setEditDays('');
-        axios.get(`http://localhost:8085/api/Leavetype/${id}`)
-            .then((result) => {
+        axios
+          .get(`http://localhost:8085/api/Leavetype/${id}`)
+          .then((result) => {
                 setEditLeave(result.data.leave_type_name);
                 setEditDays(result.data.days);
             })
@@ -173,7 +172,7 @@ const Leavetype = () => {
                             <div className="row justify-content-center">
                                 <div className="col-md-12">
                                     <div className="card shadow-lg p-4">
-                                        <h1 className="text-darkblue">Index (Leave Types)</h1> <hr />
+                                        <h1 className="text-darkblue">Leave Types</h1> <hr />
                                         <Table>
                                             <thead>
                                                 <tr>

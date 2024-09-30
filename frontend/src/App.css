@@ -19,7 +19,9 @@
   background-color: darkblue !important;
   color: white !important;
 }
-
+.custom-card-height {
+  height: 550px; /* You can change this value */
+}
 
 /* Custom CSS for changing the calendar icon box color */
 /* Custom button class */
