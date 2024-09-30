@@ -35,7 +35,7 @@ const Employees = () => {
     }
 
     axios
-      .get("https://lms-be-eight.vercel.app/api/User", {
+      .get("https://lms-be-beta.vercel.app/api/User", {
         params: { department }, // Pass department as a query parameter
       })
       .then((result) => {
@@ -52,7 +52,7 @@ const Employees = () => {
     const getDepartment = async () => {
       try {
         const response = await axios.get(
-          "https://lms-be-eight.vercel.app/find-department",
+          "https://lms-be-beta.vercel.app/find-department",
           {
             params: { username },
           }
@@ -104,7 +104,7 @@ const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
   const confirmDelete = () => {
     if (deleteEmployeeId) {
       axios
-        .delete(`https://lms-be-eight.vercel.app/api/User/delete/${deleteEmployeeId}`)
+        .delete(`https://lms-be-beta.vercel.app/api/User/delete/${deleteEmployeeId}`)
         .then((result) => {
           if (result.status === 200) {
             toast.success("Employee has been deleted");

@@ -30,7 +30,7 @@ const Register = () => {
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
-        const response = await axios.get("https://lms-be-eight.vercel.app/api/AllDepartment"); // Replace with your API endpoint
+        const response = await axios.get("https://lms-be-beta.vercel.app/api/AllDepartment"); // Replace with your API endpoint
         setDepartments(response.data); // Assuming response data is an array of department names
       } catch (error) {
         console.error("Failed to fetch departments", error);
@@ -84,7 +84,7 @@ const Register = () => {
     if (Object.keys(errors).length === 0) {
       try {
         const response = await axios.post(
-          "https://lms-be-eight.vercel.app/api/employeeregister",
+          "https://lms-be-beta.vercel.app/api/employeeregister",
           {
             username,
             password,

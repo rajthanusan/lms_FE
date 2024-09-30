@@ -22,7 +22,7 @@ const ApplyLeave = () => {
 
     // Move fetchLeaveRequests definition above useEffect
     const fetchLeaveRequests = useCallback(() => {
-        axios.get('https://lms-be-eight.vercel.app/api/LeaveView/')
+        axios.get('https://lms-be-beta.vercel.app/api/LeaveView/')
             .then((result) => {
                 const filteredData = result.data.data.filter(item => item.username === username);
                 setApprovedLeaves(filteredData); // Set the approved leaves here
@@ -38,7 +38,7 @@ const ApplyLeave = () => {
     }, [fetchLeaveRequests]); // No change here
 
     const fetchLeaveTypes = () => {
-        axios.get('https://lms-be-eight.vercel.app/api/getLeavetype')
+        axios.get('https://lms-be-beta.vercel.app/api/getLeavetype')
             .then((result) => {
                 setLeaveTypes(result.data);
                 const limits = {};
@@ -65,52 +65,52 @@ const ApplyLeave = () => {
     const handleSave = () => {
         const validationErrors = {};
         let isValid = true;
-
+    
         if (!leave) {
             validationErrors.leave = 'Please select a leave type.';
             isValid = false;
         }
-
+    
         if (!startdate) {
             validationErrors.startdate = 'Please select a start date.';
             isValid = false;
         }
-
+    
         if (!enddate) {
             validationErrors.enddate = 'Please select an end date.';
             isValid = false;
         }
-
+    
         if (!comments) {
             validationErrors.comments = 'Please provide comments.';
             isValid = false;
         }
-
+    
         if (!isValid) {
             setErrors(validationErrors);
             return;
         }
-
+    
         // Check if the approved count has reached the limit
         const currentLeave = approvedLeaveCount.find(item => item.leave_type_name === leave);
         const approvedCount = currentLeave ? currentLeave.approved : 0;
         const totalAllowed = leaveLimits[leave] || 0;
-
+    
         if (approvedCount >= totalAllowed) {
             toast.error(`You can't apply for more than ${totalAllowed} ${leave} days as the limit has been reached.`);
             return;
         }
-
-        const url = 'https://lms-be-eight.vercel.app/api/Leaveapply';
+    
+        const url = 'https://lms-be-beta.vercel.app/api/Leaveapply';
         const leaveData = {
             "leave": leave,
-            "startdate": new Date(startdate).toISOString(),
-            "enddate": new Date(enddate).toISOString(),
+            "startdate": new Date(startdate).toISOString(),  // Convert date to ISO format
+            "enddate": new Date(enddate).toISOString(),      // Convert date to ISO format
             "comments": comments,
-            "username": username,
-            "status": "pending"
+            "username": username,                            // Get username from session
+            "status": "Pending"
         };
-
+    
         axios.post(url, leaveData)
             .then(() => {
                 fetchLeaveRequests(); // Refresh approved leaves after submitting
@@ -122,6 +122,7 @@ const ApplyLeave = () => {
                 toast.error(error.message);
             });
     };
+    
 
     const clear = () => {
         setLeave('');

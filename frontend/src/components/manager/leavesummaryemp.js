@@ -24,7 +24,7 @@ const ManagerLeaveSummary = () => {
   // Fetch department for the logged-in manager
   const fetchDepartment = useCallback(async () => {
     try {
-      const response = await axios.get("https://lms-be-eight.vercel.app/find-department", {
+      const response = await axios.get("https://lms-be-beta.vercel.app/find-department", {
         params: { username },
       });
       setDepartment(response.data.department);
@@ -38,7 +38,7 @@ const ManagerLeaveSummary = () => {
     if (!department) return;
 
     try {
-      const response = await axios.get("https://lms-be-eight.vercel.app/api/User", {
+      const response = await axios.get("https://lms-be-beta.vercel.app/api/User", {
         params: { department },
       });
       setEmployees(response.data); // Set employees in the same department
@@ -50,7 +50,7 @@ const ManagerLeaveSummary = () => {
   // Fetch leave data for the department's employees
   const getLeaveData = useCallback(async () => {
     try {
-      const result = await axios.get("https://lms-be-eight.vercel.app/api/LeaveView");
+      const result = await axios.get("https://lms-be-beta.vercel.app/api/LeaveView");
       const leaveList = result.data.data;
 
       // Filter leave data based on department employees

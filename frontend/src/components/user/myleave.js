@@ -29,7 +29,7 @@ const MyLeave = () => {
     const username = loggedInUser ? JSON.parse(loggedInUser).username : '';
 
     const getData = useCallback(() => {
-        axios.get('https://lms-be-eight.vercel.app/api/LeaveView/')
+        axios.get('https://lms-be-beta.vercel.app/api/LeaveView/')
             .then((result) => {
                 const filteredData = result.data.data.filter(item => item.username === username);
                 setData(filteredData);
@@ -40,7 +40,7 @@ const MyLeave = () => {
     }, [username]);
 
     const fetchLeaveTypes = useCallback(() => {
-        axios.get('https://lms-be-eight.vercel.app/api/getLeavetype')
+        axios.get('https://lms-be-beta.vercel.app/api/getLeavetype')
             .then((result) => {
                 setLeaveTypes(result.data);
             })
@@ -56,7 +56,7 @@ const MyLeave = () => {
 
     const confirmDelete = () => {
         if (deleteItemId) {
-            axios.delete(`https://lms-be-eight.vercel.app/api/LeaveView/delete/${deleteItemId}`)
+            axios.delete(`https://lms-be-beta.vercel.app/api/LeaveView/delete/${deleteItemId}`)
                 .then((result) => {
                     if (result.status === 200) {
                         toast.success("Leave request has been deleted");
@@ -76,7 +76,7 @@ const MyLeave = () => {
             return;
         }
 
-        const url = `https://lms-be-eight.vercel.app/api/LeaveView/${editID}`;
+        const url = `https://lms-be-beta.vercel.app/api/LeaveView/${editID}`;
         const data = {
             id: editID,
             leave_type: editLeave,

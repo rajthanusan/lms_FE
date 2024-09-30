@@ -26,7 +26,7 @@ const Leavetype = () => {
     }, []);
 
     const getData = () => {
-        axios.get('https://lms-be-eight.vercel.app/api/Leavetype')
+        axios.get('https://lms-be-beta.vercel.app/api/Leavetype')
             .then((result) => {
                 setData(result.data);
             })
@@ -39,7 +39,7 @@ const Leavetype = () => {
         setShow(true);
         setEditId(id);
         axios
-          .get(`https://lms-be-eight.vercel.app/api/Leavetype/${id}`)
+          .get(`https://lms-be-beta.vercel.app/api/Leavetype/${id}`)
           .then((result) => {
                 setEditLeave(result.data.leave_type_name);
                 setEditDays(result.data.days);
@@ -55,7 +55,7 @@ const Leavetype = () => {
             return;
         }
 
-        const url = `https://lms-be-eight.vercel.app/api/Leavetype/${editID}`;
+        const url = `https://lms-be-beta.vercel.app/api/Leavetype/${editID}`;
         const data = {
             leave_type_name: editLeave,
             days: editDays,
@@ -78,7 +78,7 @@ const Leavetype = () => {
     };
 
     const handleSave = () => {
-        const url = 'https://lms-be-eight.vercel.app/api/Leavetype';
+        const url = 'https://lms-be-beta.vercel.app/api/Leavetype';
         const data = {
             leave_type_name: leave,
             days: days
@@ -129,7 +129,7 @@ const Leavetype = () => {
 
     const confirmDelete = () => {
         if (deleteId) {
-            axios.delete(`https://lms-be-eight.vercel.app/api/Leavetype/${deleteId}`)
+            axios.delete(`https://lms-be-beta.vercel.app/api/Leavetype/${deleteId}`)
                 .then((result) => {
                     if (result.status === 200) {
                         toast.success("Leave type has been deleted");

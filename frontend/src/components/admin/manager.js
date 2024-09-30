@@ -39,7 +39,7 @@ const Manager = () => {
 
   const fetchDepartments = async () => {
     try {
-      const response = await axios.get("https://lms-be-eight.vercel.app/api/AllDepartment");
+      const response = await axios.get("https://lms-be-beta.vercel.app/api/AllDepartment");
       setDepartments(response.data);
     } catch (error) {
       console.error("Failed to fetch departments", error);
@@ -49,7 +49,7 @@ const Manager = () => {
 
   const getData = () => {
     axios
-      .get("https://lms-be-eight.vercel.app/api/Manager")
+      .get("https://lms-be-beta.vercel.app/api/Manager")
       .then((result) => {
         setData(result.data);
       })
@@ -62,7 +62,7 @@ const Manager = () => {
     setShow(true);
     setEditId(id);
     axios
-      .get(`https://lms-be-eight.vercel.app/api/Manager/${id}`)
+      .get(`https://lms-be-beta.vercel.app/api/Manager/${id}`)
       .then((result) => {
         setEditDepartment(result.data.department);
         setEditUsername(result.data.username);
@@ -82,7 +82,7 @@ const Manager = () => {
       return;
     }
 
-    const url = `https://lms-be-eight.vercel.app/api/Manager/${editID}`;
+    const url = `https://lms-be-beta.vercel.app/api/Manager/${editID}`;
     const data = {
       username: editUsername,
       password: editPassword,
@@ -107,7 +107,7 @@ const Manager = () => {
   };
 
   const handleSave = () => {
-    const url = "https://lms-be-eight.vercel.app/api/crmanager";
+    const url = "https://lms-be-beta.vercel.app/api/crmanager";
     const data = {
       username: username,
       password: password,
@@ -175,7 +175,7 @@ const Manager = () => {
   const confirmDelete = () => {
     if (deleteId) {
       axios
-        .delete(`https://lms-be-eight.vercel.app/api/Manager/${deleteId}`)
+        .delete(`https://lms-be-beta.vercel.app/api/Manager/${deleteId}`)
         .then(() => {
           toast.success("Manager has been deleted");
           getData();
