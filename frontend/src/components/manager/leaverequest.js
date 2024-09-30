@@ -30,7 +30,7 @@ const Leaverequest = () => {
     const getDepartment = async () => {
       try {
         const response = await axios.get(
-          "https://lms-be-eight.vercel.app/find-department",
+          "https://lms-be-eight.vercel.app/api/find-department",
           {
             params: { username },
           }
