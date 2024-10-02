@@ -326,12 +326,8 @@ const Login = () => {
                   <Button
                     type="submit"
                     label="Login"
-                    className="p-button-primary w-100"
-                    style={{
-                      backgroundColor: "darkblue",
-                      borderColor: "darkblue",
-                      color: "white",
-                    }}
+                    className="p-button-primary custom-darkblue-button"
+                    
                   />
                   <div className="mt-3 text-center">
                     <button
