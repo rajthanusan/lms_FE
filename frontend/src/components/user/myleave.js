@@ -11,6 +11,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import Navbar from "../common/navbar";
 import { Paginator } from 'primereact/paginator'; // Import Paginator
 
+
 const MyLeave = () => {
     const [show, setShow] = useState(false);
     const [show1, setShow1] = useState(false);
@@ -23,6 +24,7 @@ const MyLeave = () => {
     const [data, setData] = useState([]);
     const [leaveTypes, setLeaveTypes] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState('');
     const rowsPerPage = 6;
 
     const loggedInUser = sessionStorage.getItem('loggedInUser');
@@ -101,19 +103,31 @@ const MyLeave = () => {
 
     const indexOfLastRow = currentPage * rowsPerPage;
     const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-    const currentRows = data.slice(indexOfFirstRow, indexOfLastRow);
 
-    // Update this function to handle page changes
+    const filteredData = Array.isArray(data) ? data.filter((item) =>
+        item.status.toLowerCase().includes(searchTerm.toLowerCase())  // Updated search to filter by leave status
+    ) : [];
+    const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+
+    // Pagination handling
     const onPageChange = (event) => {
-        setCurrentPage(event.page + 1); // PrimeReact Paginator uses zero-based index
+        setCurrentPage(event.page + 1);  // PrimeReact Paginator uses zero-based index
     };
-
     return (
         <Fragment>
             <Navbar user />
             <ToastContainer /> <br />
             <Container>
                 <h2 className="text-darkblue">My Leave Requests</h2> <hr />
+                <div className="input-group mb-3">
+                    <input
+                        type="text"
+                        className="form-control"
+                        placeholder="Search by leave status"  // Updated placeholder
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                </div>
+
                 <Table striped hover className="table-light">
                     <thead>
                         <tr>

@@ -30,15 +30,15 @@ export default function Routesnav() {
             <Routes>
                 {/* Home navigation routes */}
                 <Route
-                    path="/homeadmin"
+                    path="/Admin"
                     element={loggedInAdmin ? <Home admin /> : <Navigate to="/login" />}
                 />
                 <Route
-                    path="/homeuser"
+                    path="/Employee"
                     element={loggedInUser ? <Home user /> : <Navigate to="/login" />}
                 />
                 <Route
-                    path="/homedepartmentmanager"
+                    path="/DManager"
                     element={loggedInDepartmentManager ? <Home departmentManager /> : <Navigate to="/login" />}
                 />
 
@@ -69,6 +69,7 @@ export default function Routesnav() {
                     path="/manager"
                     element={loggedInAdmin ? <Manager /> : <Navigate to="/login" />}
                 />
+                
                 <Route
                     path="/department"
                     element={loggedInAdmin ? <Department/> : <Navigate to="/login" />}

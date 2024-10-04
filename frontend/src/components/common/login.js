@@ -50,16 +50,16 @@ const Login = () => {
         sessionStorage.setItem('loggedInAdmin', JSON.stringify(user));
         toast.success("Admin login successful!");
 
-        window.location.href = "/homeadmin"; // Redirect to admin home
+        window.location.href = "/Admin"; // Redirect to admin home
       } else if (user.role === 'manager') {
         sessionStorage.setItem('loggedInDepartmentManager', JSON.stringify(user));
         toast.success("Manager login successful!");
 
-        window.location.href ='/homedepartmentmanager'; // Redirect to department manager home
+        window.location.href ='/DManager'; // Redirect to department manager home
       } else {
         sessionStorage.setItem('loggedInUser', JSON.stringify(user));
         toast.success("User login successful !");
-        window.location.href ='/homeuser';
+        window.location.href ='/Employee';
          // Redirect to user home
       }
     } else {
@@ -326,7 +326,7 @@ const Login = () => {
                   <Button
                     type="submit"
                     label="Login"
-                    className="p-button-primary w-100"
+                    className="p-button-primary w-100 custom-darkblue-button"
                     style={{
                       backgroundColor: "darkblue",
                       borderColor: "darkblue",

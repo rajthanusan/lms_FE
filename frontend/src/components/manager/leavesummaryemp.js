@@ -5,8 +5,10 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Table from "react-bootstrap/Table";
-import { Paginator } from "primereact/paginator"; // Ensure you're importing Paginator only once
+import { Paginator } from "primereact/paginator";
 import Navbar from "../common/navbar";
+import jsPDF from "jspdf";
+import "jspdf-autotable"; // Import jsPDF AutoTable
 
 const ManagerLeaveSummary = () => {
   const [leaveData, setLeaveData] = useState([]);
@@ -129,6 +131,74 @@ const ManagerLeaveSummary = () => {
     setCurrentPage(event.page + 1); // Update current page
   };
 
+  // Function to generate PDF using jsPDF
+  // Function to generate PDF using jsPDF with better layout
+  const downloadPdf = (username) => {
+    const doc = new jsPDF();
+  
+    // Set the document title and add employee details
+    doc.setFontSize(18);
+    doc.text("Employee Leave Summary", 14, 20);
+  
+    // Add employee details
+    doc.setFontSize(12);
+    doc.text(`Employee: ${username}`, 14, 30);
+    doc.text(`Department: ${department}`, 14, 36);
+    doc.text(`Report Date: ${new Date().toLocaleDateString()}`, 14, 42);
+  
+    // Leave Summary Table Data
+    const leaveDataForUser = leaveSummary[username];
+    const tableData = Object.keys(leaveDataForUser).map((leaveType) => [
+      leaveType,
+      leaveDataForUser[leaveType].approved || 0,
+      leaveDataForUser[leaveType].pending || 0,
+      leaveDataForUser[leaveType].rejected || 0,
+    ]);
+  
+    // Draw the summary table with headings
+    doc.autoTable({
+      startY: 50, // Start after employee details
+      head: [["Leave Type", "Approved", "Pending", "Rejected"]],
+      body: tableData,
+      theme: "striped", // Add striped theme for clarity
+      styles: { fontSize: 10 }, // Adjust font size
+      headStyles: { fillColor: [41, 128, 185] }, // Custom header color
+      margin: { top: 10, left: 14, right: 14 }, // Page margins for better spacing
+    });
+  
+    // Fetch leave data details for this user
+    const filteredLeaveData = leaveData.filter(leave => leave.username === username);
+    const detailedLeaveData = filteredLeaveData.map(leave => [
+      leave.leave_type,
+      new Date(leave.start_date).toLocaleDateString(),
+      new Date(leave.end_date).toLocaleDateString(),
+      leave.comments,
+      leave.status,
+    ]);
+  
+    // Add detailed leave records
+    doc.autoTable({
+      startY: doc.lastAutoTable.finalY + 10, // Start after the summary table
+      head: [["Leave Type", "Start Date", "End Date", "Comments", "Status"]],
+      body: detailedLeaveData,
+      theme: "grid",
+      styles: { fontSize: 10 },
+    });
+  
+    // Add a footer with page number and company details
+    const pageCount = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= pageCount; i++) {
+      doc.setPage(i);
+      doc.setFontSize(10);
+      doc.text(`Page ${i} of ${pageCount}`, 14, doc.internal.pageSize.height - 10);
+      doc.text("Leave Managment Team", 170, doc.internal.pageSize.height - 10);
+    }
+  
+    // Save the document with a meaningful filename
+    doc.save(`${username}-leave-summary-${new Date().toLocaleDateString()}.pdf`);
+  };
+  
+
   return (
     <Fragment>
       <Navbar manager username={username} />
@@ -156,6 +226,7 @@ const ManagerLeaveSummary = () => {
               <th>Approved</th>
               <th>Pending</th>
               <th>Rejected</th>
+              <th>Report</th>
             </tr>
           </thead>
           <tbody>
@@ -173,23 +244,23 @@ const ManagerLeaveSummary = () => {
                       <td>{leaveSummary[username][leaveType].approved || 0}</td>
                       <td>{leaveSummary[username][leaveType].pending || 0}</td>
                       <td>{leaveSummary[username][leaveType].rejected || 0}</td>
+                      {i === 0 && (
+                        <td rowSpan={Object.keys(leaveSummary[username]).length}>
+                          <button
+                            className="btn btn-primary custom-darkblue-button"
+                            onClick={() => downloadPdf(username)}
+                          >
+                            Download PDF
+                          </button>
+                        </td>
+                      )}
                     </tr>
-                    {/* Total row for leave type */}
-                    {i === Object.keys(leaveSummary[username]).length - 1 && (
-                      <tr>
-                        <td><strong>Total</strong></td>
-                        <td></td>
-                        <td>{Object.values(leaveSummary[username]).reduce((sum, leave) => sum + (leave.approved || 0), 0)}</td>
-                        <td>{Object.values(leaveSummary[username]).reduce((sum, leave) => sum + (leave.pending || 0), 0)}</td>
-                        <td>{Object.values(leaveSummary[username]).reduce((sum, leave) => sum + (leave.rejected || 0), 0)}</td>
-                      </tr>
-                    )}
                   </Fragment>
                 ))
               )
             ) : (
               <tr>
-                <td colSpan="5" className="text-center">
+                <td colSpan="6" className="text-center">
                   No leave records available.
                 </td>
               </tr>
@@ -203,7 +274,7 @@ const ManagerLeaveSummary = () => {
           rows={itemsPerPage}
           totalRecords={filteredData.length}
           onPageChange={onPageChange}
-          className="custom-paginator" // Add your custom class here
+          className="custom-paginator"
         />
       </Container>
     </Fragment>

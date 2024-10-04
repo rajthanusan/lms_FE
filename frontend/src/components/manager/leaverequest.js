@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import {Paginator} from "primereact/paginator"; // Make sure to import the Paginator
+import { Paginator } from "primereact/paginator"; // Make sure to import the Paginator
 
 const Leaverequest = () => {
   const [data, setData] = useState([]);
@@ -107,18 +107,22 @@ const Leaverequest = () => {
       });
   };
 
-  
-
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
-  const filteredData = Array.isArray(data)
-  ? data.filter((item) =>
-      item.leave_type.toLowerCase().includes(searchTerm.toLowerCase()) || // Search by leave type
-      item.username.toLowerCase().includes(searchTerm.toLowerCase()) // Search by username
-    )
-  : [];
 
-const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
+  // Filtering logic to accommodate searching by leave type, username, and date
+  const filteredData = Array.isArray(data)
+    ? data.filter((item) => {
+        const leaveTypeMatch = item.leave_type.toLowerCase().includes(searchTerm.toLowerCase());
+        const usernameMatch = item.username.toLowerCase().includes(searchTerm.toLowerCase());
+        const startDateMatch = new Date(item.start_date).toLocaleDateString().includes(searchTerm);
+        const endDateMatch = new Date(item.end_date).toLocaleDateString().includes(searchTerm);
+        
+        return leaveTypeMatch || usernameMatch || startDateMatch || endDateMatch;
+      })
+    : [];
+
+  const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
 
   const onPageChange = (event) => {
     setCurrentPage(event.page + 1); // Update current page when pagination changes
@@ -136,7 +140,7 @@ const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
           <input
             type="text"
             className="form-control"
-            placeholder="Search by mail or leave type"
+            placeholder="Search by email, leave type, or date (MM/DD/YYYY)"
             onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
@@ -158,8 +162,6 @@ const currentRows = filteredData.slice(indexOfFirstRow, indexOfLastRow);
                 <td>{item.leave_type}</td>
                 <td>{new Date(item.start_date).toLocaleDateString()}</td>
                 <td>{new Date(item.end_date).toLocaleDateString()}</td>
-               
-
                 <td>
                   <OverlayTrigger
                     placement="top"
