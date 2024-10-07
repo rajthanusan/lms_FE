@@ -45,6 +45,28 @@
   color: white;
   transition: background-color 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
 }
+.google-login {
+  display: flex;
+  justify-content: center; /* Center the button horizontally */
+  margin-top: 20px; /* Add space above the button */
+}
+
+.google-login button {
+  background-color: #4285F4; /* Google Blue */
+  color: white; /* Text color */
+  border: none; /* No border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 10px 20px; /* Padding for size */
+  font-size: 16px; /* Font size */
+  cursor: pointer; /* Pointer cursor on hover */
+  transition: background-color 0.3s; /* Transition for hover effect */
+  display: flex;
+  align-items: center; /* Center items vertically */
+}
+
+.google-login button:hover {
+  background-color: #357AE8; /* Darker blue on hover */
+}
 
 /* Hover effect for custom-gold-button */
 .custom-gold-button:hover {

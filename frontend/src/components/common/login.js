@@ -6,7 +6,8 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import Navbar from "./navbar";
 import { Card } from "primereact/card";
- // Import useNavigate for routing
+import { GoogleLogin } from "@react-oauth/google"; // Google login
+ // Assuming this file exists for your custom styles
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -19,58 +20,92 @@ const Login = () => {
   const [isCodeVerified, setIsCodeVerified] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
- // Initialize useNavigate for redirection
 
+  // Handle login
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setValidationErrors({});
+    e.preventDefault();
+    setValidationErrors({});
 
-  // Validate input
-  if (!username || !password) {
-    setValidationErrors({
-      username: !username ? "Username is required" : "",
-      password: !password ? "Password is required" : "",
-    });
-    return;
-  }
-
-  try {
-    // Send login request to the API
-    const response = await axios.post("https://lms-be-beta.vercel.app/api/login", {
-      username,
-      password,
-    });
-
-    // Check if login was successful
-    if (response.data.message === "Login successful") {
-      const user = response.data.userData; // Adjust according to your response structure
-
-      // Storing user data in session storage based on role
-      if (user.role === 'admin') {
-        sessionStorage.setItem('loggedInAdmin', JSON.stringify(user));
-        toast.success("Admin login successful!");
-
-        window.location.href = "/Admin"; // Redirect to admin home
-      } else if (user.role === 'manager') {
-        sessionStorage.setItem('loggedInDepartmentManager', JSON.stringify(user));
-        toast.success("Manager login successful!");
-
-        window.location.href ='/DManager'; // Redirect to department manager home
-      } else {
-        sessionStorage.setItem('loggedInUser', JSON.stringify(user));
-        toast.success("User login successful !");
-        window.location.href ='/Employee';
-         // Redirect to user home
-      }
-    } else {
-      toast.error(response.data.message); // Display error message from server
+    // Validate input
+    if (!username || !password) {
+      setValidationErrors({
+        username: !username ? "Username is required" : "",
+        password: !password ? "Password is required" : "",
+      });
+      return;
     }
-  } catch (error) {
-    console.error("Login error:", error);
-    toast.error("Error logging in. Please try again."); // Handle error
+
+    try {
+      const response = await axios.post("https://lms-be-beta.vercel.app/api/login", {
+        username,
+        password,
+      });
+
+      if (response.data.message === "Login successful") {
+        const user = response.data.userData;
+
+        // Role-based login
+        if (user.role === "admin") {
+          sessionStorage.setItem("loggedInAdmin", JSON.stringify(user));
+          toast.success("Admin login successful!");
+          window.location.href = "/Admin"; // Redirect to admin dashboard
+        } else if (user.role === "manager") {
+          sessionStorage.setItem("loggedInDepartmentManager", JSON.stringify(user));
+          toast.success("Manager login successful!");
+          window.location.href = "/DManager"; // Redirect to department manager dashboard
+        } else {
+          sessionStorage.setItem("loggedInUser", JSON.stringify(user));
+          toast.success("User login successful!");
+          window.location.href = "/Employee"; // Redirect to employee dashboard
+        }
+      } else {
+        toast.error(response.data.message);
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Error logging in. Please try again.");
+    }
+  };
+
+  // Google login success handler
+ // Google login success handler
+const handleGoogleLoginSuccess = async (response) => {
+  try {
+    const result = await axios.post(
+      "https://lms-be-beta.vercel.app/api/google-login",
+      { token: response.credential }
+    );
+
+    // Assuming the user data is returned in result.data.userData
+    const user = result.data.userData;
+
+    // Role-based login
+    if (user.role === "admin") {
+      sessionStorage.setItem("loggedInAdmin", JSON.stringify(user));
+      toast.success("Admin login successful!");
+      window.location.href = "/Admin"; // Redirect to admin dashboard
+    } else if (user.role === "manager") {
+      sessionStorage.setItem("loggedInDepartmentManager", JSON.stringify(user));
+      toast.success("Manager login successful!");
+      window.location.href = "/DManager"; // Redirect to department manager dashboard
+    } else {
+      sessionStorage.setItem("loggedInUser", JSON.stringify(user));
+      toast.success("User login successful!");
+      window.location.href = "/Employee"; // Redirect to employee dashboard
+    }
+  } catch (err) {
+    console.error("Google login failed:", err);
+    toast.error("Google login failed. Please try again."); // Changed alert to toast for consistency
   }
 };
 
+const handleGoogleLoginFailure = (error) => {
+  console.error("Google login failed:", error);
+  toast.error("Google login failed. Please try again."); // Changed alert to toast for consistency
+};
+
+
+  // Forgot Password - Request Reset
   const handleRequestReset = async () => {
     try {
       const response = await axios.post(
@@ -89,6 +124,7 @@ const Login = () => {
     }
   };
 
+  // Forgot Password - Verify Code
   const handleVerifyCode = async () => {
     try {
       const response = await axios.post(
@@ -107,6 +143,7 @@ const Login = () => {
     }
   };
 
+  // Forgot Password - Reset Password
   const handleResetPassword = async () => {
     if (newPassword !== confirmPassword) {
       toast.error("Passwords don't match.");
@@ -124,9 +161,7 @@ const Login = () => {
         { email: resetEmail, newPassword }
       );
       if (response.data.success) {
-        toast.success(
-          "Password reset successful! You can now log in with your new password."
-        );
+        toast.success("Password reset successful! You can now log in with your new password.");
         resetForm();
         setShowForgotPassword(false);
       } else {
@@ -247,25 +282,25 @@ const Login = () => {
                         <InputText
                           id="newPassword"
                           value={newPassword}
+                          type="password"
                           onChange={(e) => setNewPassword(e.target.value)}
                           placeholder="Enter new password"
-                          type="password"
                         />
                       </div>
-                      <div className="p-inputgroup flex-1 mt-2">
+                      <div className="p-inputgroup flex-1 mt-3">
                         <span className="p-inputgroup-addon">
                           <i className="pi pi-key"></i>
                         </span>
                         <InputText
                           id="confirmPassword"
                           value={confirmPassword}
+                          type="password"
                           onChange={(e) => setConfirmPassword(e.target.value)}
                           placeholder="Confirm new password"
-                          type="password"
                         />
                       </div>
                       <Button
-                        type="button"
+                        type="submit"
                         label="Reset Password"
                         className="p-button-primary w-100 mt-3"
                         style={{
@@ -273,26 +308,18 @@ const Login = () => {
                           borderColor: "darkblue",
                           color: "white",
                         }}
-                        onClick={handleResetPassword}
                       />
                     </form>
                   )}
-                  <div className="mt-4">
-                    <p>
-                      Remembered your password?{" "}
-                      <button
-                        type="button"
-                        onClick={() => setShowForgotPassword(false)}
-                        className="link-button"
-                      >
-                        Login here.
-                      </button>
-                    </p>
-                  </div>
+                  <Button
+                    label="Back to Login"
+                    className="p-button-link w-100 mt-3"
+                    onClick={() => setShowForgotPassword(false)}
+                  />
                 </div>
               ) : (
-                <form onSubmit={handleLogin}>
-                  <div className="p-inputgroup flex-1 mb-3">
+                <form className="p-fluid" onSubmit={handleLogin}>
+                  <div className="p-inputgroup flex-1">
                     <span className="p-inputgroup-addon">
                       <i className="pi pi-user"></i>
                     </span>
@@ -301,49 +328,77 @@ const Login = () => {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       placeholder="Username"
-                      required
+                      className={`form-control ${
+                        validationErrors.username ? "is-invalid" : ""
+                      }`}
                     />
+                    {validationErrors.username && (
+                      <div className="invalid-feedback">
+                        {validationErrors.username}
+                      </div>
+                    )}
                   </div>
-                  {validationErrors.username && (
-                    <small className="p-error">{validationErrors.username}</small>
-                  )}
-                  <div className="p-inputgroup flex-1 mb-3">
+                  <div className="p-inputgroup flex-1 mt-3">
                     <span className="p-inputgroup-addon">
                       <i className="pi pi-lock"></i>
                     </span>
                     <InputText
                       id="password"
+                      type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       placeholder="Password"
-                      type="password"
-                      required
+                      className={`form-control ${
+                        validationErrors.password ? "is-invalid" : ""
+                      }`}
                     />
+                    {validationErrors.password && (
+                      <div className="invalid-feedback">
+                        {validationErrors.password}
+                      </div>
+                    )}
                   </div>
-                  {validationErrors.password && (
-                    <small className="p-error">{validationErrors.password}</small>
-                  )}
                   <Button
                     type="submit"
                     label="Login"
-                    className="p-button-primary w-100 custom-darkblue-button"
+                    className="p-button-primary w-100 mt-3"
                     style={{
                       backgroundColor: "darkblue",
                       borderColor: "darkblue",
                       color: "white",
                     }}
-                    
                   />
-                  <div className="mt-3 text-center">
-                    <button
-                      type="button"
-                      onClick={() => setShowForgotPassword(true)}
-                      className="link-button"
-                    >
-                      Forgot Password?
-                    </button>
-                  </div>
                 </form>
+              )}
+
+             
+                  <div className="google-login mt-1">
+                    <GoogleLogin
+                      onSuccess={handleGoogleLoginSuccess}
+                      onError={handleGoogleLoginFailure}
+                      render={(renderProps) => (
+                        <Button
+                          label="Login with Google"
+                          className="p-button-primary w-100 mt-3" // Same class as the other buttons
+                          style={{
+                            backgroundColor: "darkblue",
+                            borderColor: "darkblue",
+                            color: "white",
+                          }}
+                          onClick={renderProps.onClick}
+                          disabled={renderProps.disabled} // Disable button if Google login is loading
+                        />
+                      )}
+                    />
+                  </div> {!showForgotPassword && (
+                <div className="mt-0">
+                  <Button
+                    label="Forgot Password?"
+                    className="p-button-link w-100"
+                    onClick={() => setShowForgotPassword(true)}
+                  />
+
+                </div>
               )}
             </Card>
           </div>
